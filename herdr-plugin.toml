@@ -1,0 +1,56 @@
+id = "hourtick"
+name = "Hourtick"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Connect your herdr agents to Hourtick: hand them tasks, see the time they spend and log it, all over Hourtick's MCP server."
+platforms = ["linux", "macos", "windows"]
+
+# Actions open small panes; nothing runs until you ask.
+
+[[actions]]
+id = "connect"
+title = "Hourtick: connect your agents"
+contexts = ["workspace", "pane"]
+command = ["node", "bin/open.mjs", "connect"]
+
+[[actions]]
+id = "work"
+title = "Hourtick: start an agent on a task"
+contexts = ["workspace", "pane"]
+command = ["node", "bin/open.mjs", "work"]
+
+[[actions]]
+id = "time"
+title = "Hourtick: agent time"
+contexts = ["workspace", "pane"]
+command = ["node", "bin/open.mjs", "time"]
+
+[[panes]]
+id = "connect"
+title = "Hourtick: connect"
+placement = "overlay"
+command = ["node", "bin/connect.mjs"]
+
+[[panes]]
+id = "work"
+title = "Hourtick: work on a task"
+placement = "overlay"
+command = ["node", "bin/work.mjs"]
+
+[[panes]]
+id = "time"
+title = "Hourtick: agent time"
+placement = "overlay"
+command = ["node", "bin/time.mjs"]
+
+# Measures how long each agent works (working -> anything else), locally, so it can be logged to Hourtick.
+[[events]]
+on = "pane.agent_status_changed"
+command = ["node", "bin/track.mjs"]
+
+# Ctrl+click a Hourtick task link in any pane to start an agent on that task.
+[[link_handlers]]
+id = "task"
+title = "Work on this Hourtick task"
+pattern = '^https://hourtick\.com/app/tasks\?(?:[^#]*&)?task=\d+'
+action = "work"
